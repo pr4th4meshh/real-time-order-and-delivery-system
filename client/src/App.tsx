@@ -1,3 +1,4 @@
+import { Toaster } from "sonner"
 import "./App.css"
 import { Providers } from "./providers"
 import { Router } from "./Router"
@@ -7,6 +8,7 @@ function App() {
     <>
       <Providers>
         <Router />
+        <Toaster richColors />
       </Providers>
     </>
   )
