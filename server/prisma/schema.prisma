@@ -19,7 +19,7 @@ model User {
   name         String
   email        String  @unique
   passwordHash String
-  role         Role
+  role         Role @default(customer)
   orders       Order[] @relation("CustomerOrders")
   deliveries   Order[] @relation("PartnerDeliveries")
 }
