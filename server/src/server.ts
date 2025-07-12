@@ -1,5 +1,6 @@
 import express from "express"
 import authRouter from "./routes/auth.route"
+import productRouter from "./routes/product.route"
 import cors from "cors"
 
 const app = express()
@@ -10,6 +11,7 @@ app.use(cors({ origin: allowedOrigins, credentials: true }))
 
 app.use(express.json())
 app.use("/api/v1/auth", authRouter)
+app.use("/api/v1/product", productRouter)
 
 app.get("/", (_req, res) => {
   res.json({

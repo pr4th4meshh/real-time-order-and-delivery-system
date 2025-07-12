@@ -36,6 +36,14 @@ model Order {
   updatedAt  DateTime    @updatedAt
 }
 
+model Product {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  description String
+  price     Float
+  imageUrl  String?
+}
+
 enum Role {
   customer
   partner
