@@ -4,16 +4,18 @@ import { ApiResponse } from "./utils/apiResponse"
 import jwt from "jsonwebtoken"
 import { prisma } from "./lib/prisma"
 
-export interface AuthRequest extends Request {
-  user?: User
-}
-
 export const requireAuth = async (
-  req: AuthRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.headers.authorization?.split(" ")[1]
+  let token = req.headers.authorization?.split(" ")[1]
+
+  // Fall back to cookie
+  if (!token && req.cookies?.token) {
+    token = req.cookies.token
+  }
+
   if (!token) {
     return ApiResponse({
       res,
@@ -55,8 +57,7 @@ export const requireAuth = async (
 }
 
 export const requireRole =
-  (roles: Role[]) =>
-  (req: AuthRequest, res: Response, next: NextFunction) => {
+  (roles: Role[]) => (req: Request, res: Response, next: NextFunction) => {
     if (!req.user || !roles.includes(req.user.role)) {
       return res.status(403).json({ error: "Forbidden" })
     }
