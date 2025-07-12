@@ -11,6 +11,7 @@ import { useLogin } from "@/hooks/auth/useLogin"
 import { loginSchema } from "@/lib/zod/loginSchema"
 import { toast } from "sonner"
 import { validateSchema } from "@/lib/zod/template"
+import { useStore } from "@/store/store"
 
 interface LoginFormProps {
   email: string
@@ -22,6 +23,7 @@ const Login = () => {
   const navigate = useNavigate()
   const { isPending, mutate } = useLogin()
   const passwordInputRef = useRef(null)
+  const { setIsAuthorized} = useStore()
 
   const [formData, setFormData] = useState<LoginFormProps>({
     email: "",
@@ -47,6 +49,8 @@ const Login = () => {
       { ...data },
       {
         onSuccess: () => {
+          useStore.getState().fetchUserStatus()
+          setIsAuthorized(true)
           navigate("/")
         },
         onError: (error) => {
