@@ -137,3 +137,29 @@ export const getUser = async (req: Request, res: Response) => {
     })
   }
 }
+
+
+export const logout = async (req: Request, res: Response) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    })
+
+    return ApiResponse({
+      res,
+      success: true,
+      message: "Logout successful",
+      data: null,
+    })
+  } catch (error) {
+    return ApiResponse({
+      res,
+      status: 500,
+      success: false,
+      message: "Logout failed",
+      data: error,
+    })
+  }
+}
