@@ -1,26 +1,30 @@
-import express from 'express';
+import express from "express"
 import authRouter from "./routes/auth.route"
+import cors from "cors"
 
-const app = express();
-const PORT = process.env.PORT;
+const app = express()
+const PORT = process.env.PORT
 
-app.use(express.json());
+const allowedOrigins = ["http://localhost:5173", "http://localhost:5174"]
+app.use(cors({ origin: allowedOrigins, credentials: true }))
+
+app.use(express.json())
 app.use("/api/v1/auth", authRouter)
 
-app.get('/', (_req, res) => {
+app.get("/", (_req, res) => {
   res.json({
-    message: `Server running on port ${PORT}`
+    message: `Server running on port ${PORT}`,
   })
-});
+})
 
-app.get('/health', (_req, res) => {
+app.get("/health", (_req, res) => {
   res.json({
     status: "healthy",
     time: new Date().toISOString(),
-    uptime: process.uptime()
-  });
-});
+    uptime: process.uptime(),
+  })
+})
 
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
+  console.log(`Server running at http://localhost:${PORT}`)
+})
