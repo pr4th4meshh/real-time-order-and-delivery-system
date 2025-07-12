@@ -1,12 +1,14 @@
 import "./App.css"
-import { Button } from "./components/ui/button"
+import { Providers } from "./providers"
+import { Router } from "./Router"
 
 function App() {
   return (
-    <div>
-      Get real time updates on orders
-      <Button variant="default">Primary</Button>
-    </div>
+    <>
+      <Providers>
+        <Router />
+      </Providers>
+    </>
   )
 }
 
