@@ -120,11 +120,12 @@ export const getUser = async (req: Request, res: Response) => {
         data: null,
       })
     }
+    const { passwordHash, ...safeUser } = user
     return ApiResponse({
       res,
       success: true,
       message: "User fetched successfully",
-      data: user,
+      data: safeUser,
     })
   } catch (error) {
     return ApiResponse({
