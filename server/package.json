@@ -20,7 +20,11 @@
   },
   "dependencies": {
     "@prisma/client": "^6.11.1",
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.10",
+    "bcrypt": "^6.0.0",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.2"
   }
 }

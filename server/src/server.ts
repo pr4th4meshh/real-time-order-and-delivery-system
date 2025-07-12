@@ -1,9 +1,11 @@
 import express from 'express';
+import authRouter from "./routes/auth.route"
 
 const app = express();
-const PORT = 9000;
+const PORT = process.env.PORT;
 
 app.use(express.json());
+app.use("/api/v1/auth", authRouter)
 
 app.get('/', (_req, res) => {
   res.json({
