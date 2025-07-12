@@ -21,12 +21,13 @@ export const register = async (req: Request, res: Response) => {
     const user = await prisma.user.create({
       data: userData,
     })
+    const { passwordHash, ...safeUser } = user
 
     return ApiResponse({
       res,
       success: true,
       message: "User registered successfully",
-      data: user,
+      data: safeUser,
     })
   } catch (error) {
     return ApiResponse({
