@@ -83,11 +83,13 @@ export const login = async (req: Request, res: Response) => {
       maxAge: 60 * 60 * 24 * 30 * 1000,
     })
 
+    const { passwordHash, ...safeUser } = user
+
     return ApiResponse({
       res,
       success: true,
       message: "Login successful",
-      data: user,
+      data: safeUser,
     })
   } catch (error) {
     return ApiResponse({
