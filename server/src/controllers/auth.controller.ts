@@ -3,6 +3,7 @@ import bcrypt from "bcrypt"
 import { prisma } from "../lib/prisma"
 import { ApiResponse } from "../utils/apiResponse"
 import jwt from "jsonwebtoken"
+import { User } from "@prisma/client"
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -97,6 +98,40 @@ export const login = async (req: Request, res: Response) => {
       status: 500,
       success: false,
       message: "Login failed",
+      data: error,
+    })
+  }
+}
+
+export const getUser = async (req: Request, res: Response) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.user.id,
+      },
+    })
+
+    if (!user) {
+      return ApiResponse({
+        res,
+        status: 404,
+        success: false,
+        message: "User not found",
+        data: null,
+      })
+    }
+    return ApiResponse({
+      res,
+      success: true,
+      message: "User fetched successfully",
+      data: user,
+    })
+  } catch (error) {
+    return ApiResponse({
+      res,
+      status: 500,
+      success: false,
+      message: "User fetching failed",
       data: error,
     })
   }
