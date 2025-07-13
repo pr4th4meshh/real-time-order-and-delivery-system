@@ -13,7 +13,7 @@ interface UserState {
 }
 
 interface UserActions {
-  setUser: (email: string | null, name: string | null) => void
+  setUser: (email: string | null, name: string | null, role: string | null) => void
   setIsAuthorized: (value: boolean) => void
   logoutUser: () => void
   fetchUserStatus: () => Promise<void>
@@ -30,16 +30,18 @@ export const createUserSlice: StateCreator<
   user: {
     email: null,
     name: null,
+    role: null,
   },
   isAuthorized: false,
   isLoading: true,
   error: null,
-  setUser: (email: string | null, name: string | null) =>
+  setUser: (email: string | null, name: string | null, role: string | null) =>
     set((state) => ({
       ...state,
       user: {
         email,
         name,
+        role,
       },
     })),
   setIsAuthorized: (value: boolean) =>
@@ -52,6 +54,7 @@ export const createUserSlice: StateCreator<
       user: {
         email: null,
         name: null,
+        role: null,
       },
       isAuthorized: false,
     }))
@@ -72,6 +75,7 @@ export const createUserSlice: StateCreator<
         user: {
           email: user.email,
           name: user.name,
+          role: user.role,
         },
         isLoading: false,
       }))
