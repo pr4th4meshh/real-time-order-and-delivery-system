@@ -1,11 +1,13 @@
 import { StateCreator } from "zustand"
 import { checkUserStatus } from "@/hooks/auth/useIsAuthenticated"
 import { StoreState } from "./store"
+import { IUser } from "@/types/user.types"
 
 interface UserState {
   user: {
     email: string | null
     name: string | null
+    role: IUser['role']
   }
   isAuthorized: boolean
   error: string | null
