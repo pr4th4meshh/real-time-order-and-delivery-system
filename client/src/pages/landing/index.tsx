@@ -20,9 +20,19 @@ const Landing = () => {
           Logout
         </Button>
       ) : (
+        <div className="flex items-center gap-x-2">
         <Button variant="default" onClick={() => navigate("/auth/login")}>
           Login
         </Button>
+
+        <Button variant="default" onClick={() => navigate("/auth/register")}>
+          Register
+        </Button>
+
+        <Button variant="default" onClick={() => navigate("/auth/register/partner")}>
+          Register as Delivery Partner
+        </Button>
+        </div>
       )}
     </div>
   )

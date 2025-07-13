@@ -9,7 +9,10 @@ export const Router = () => {
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/auth/login" element={<Login />} />
-      <Route path="/auth/register" element={<Register />} />
+
+      <Route path="/auth/register" element={<Register role="customer" />} />
+      <Route path="/auth/register/partner" element={<Register role="partner" />} />
+      <Route path="/auth/register/admin" element={<Register role="admin" />} />
     </Routes>
   )
 }

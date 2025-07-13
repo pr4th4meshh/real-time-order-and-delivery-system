@@ -1,5 +1,3 @@
-"use client"
-
 import React, { useState, useRef } from "react"
 import type { ChangeEvent } from "react"
 import { useNavigate } from "react-router-dom"

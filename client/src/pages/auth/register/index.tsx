@@ -1,5 +1,3 @@
-"use client"
-
 import React, { useState } from "react"
 import type { ChangeEvent } from "react"
 import { useNavigate } from "react-router-dom"
@@ -7,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useRegister } from "@/hooks/auth/useRegister"
+import { useRoleRegister } from "@/hooks/auth/useRoleRegister"
 import { registerSchema } from "@/lib/zod/registerSchema"
 import { toast } from "sonner"
 import { validateSchema } from "@/lib/zod/template"
@@ -19,9 +17,13 @@ interface SignupFormProps {
   confirmPassword: string
 }
 
-const Register = () => {
+interface RegisterPageProps {
+  role: 'customer' | 'partner' | 'admin'
+}
+
+const RegisterPage = ({ role }: RegisterPageProps) => {
   const navigate = useNavigate()
-  const { isPending, mutate } = useRegister()
+  const { isPending, mutate } = useRoleRegister(role)
 
   const [formData, setFormData] = useState<SignupFormProps>({
     name: "",
@@ -29,6 +31,15 @@ const Register = () => {
     password: "",
     confirmPassword: "",
   })
+
+  const getRoleTitle = () => {
+    switch (role) {
+      case 'customer': return 'Customer'
+      case 'partner': return 'Delivery Partner'
+      case 'admin': return 'Admin'
+      default: return 'User'
+    }
+  }
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -44,10 +55,10 @@ const Register = () => {
     mutate(data, {
       onSuccess: () => {
         navigate("/auth/login")
-        toast.success("Signup successful")
+        toast.success(`${getRoleTitle()} account created successfully!`)
       },
-      onError: () => {
-        toast.error("Something went wrong. Please try again.")
+      onError: (error) => {
+        toast.error(error.response?.data?.message || "Something went wrong. Please try again.")
       },
     })
   }
@@ -56,8 +67,12 @@ const Register = () => {
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Create Account</CardTitle>
-          <CardDescription className="text-center">Enter your information to create your account</CardDescription>
+          <CardTitle className="text-2xl font-bold text-center">
+            Register as {getRoleTitle()}
+          </CardTitle>
+          <CardDescription className="text-center">
+            Enter your information to create your {getRoleTitle().toLowerCase()} account
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-4">
@@ -70,6 +85,7 @@ const Register = () => {
                 placeholder="Enter your full name"
                 value={formData.name}
                 onChange={handleChange}
+                required
               />
             </div>
 
@@ -82,6 +98,7 @@ const Register = () => {
                 placeholder="Enter your email"
                 value={formData.email}
                 onChange={handleChange}
+                required
               />
             </div>
 
@@ -94,6 +111,8 @@ const Register = () => {
                 placeholder="Enter your password"
                 value={formData.password}
                 onChange={handleChange}
+                required
+                minLength={6}
               />
             </div>
 
@@ -106,11 +125,21 @@ const Register = () => {
                 placeholder="Confirm your password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
+                required
+                minLength={6}
               />
             </div>
 
-            <Button type="submit" className="w-full" disabled={isPending}>
-              {isPending ? "Creating Account..." : "Create Account"}
+            {role === 'admin' && (
+              <div className="p-4 bg-red-50 rounded-md">
+                <p className="text-sm text-red-700">
+                  Admin registration is restricted. You'll need approval from existing admins.
+                </p>
+              </div>
+            )}
+
+            <Button type="submit" className="w-full" disabled={isPending || role === 'admin'}>
+              {isPending ? "Creating Account..." : `Register as ${getRoleTitle()}`}
             </Button>
           </form>
 
@@ -120,10 +149,24 @@ const Register = () => {
               Sign in
             </a>
           </div>
+
+          {role !== 'admin' && (
+            <div className="mt-4 text-center text-sm">
+              <span className="text-gray-600">
+                Want to register as {role === 'customer' ? 'delivery partner' : 'customer'}?{' '}
+              </span>
+              <a 
+                href={role === 'customer' ? '/register/partner' : '/register/customer'} 
+                className="text-blue-600 hover:underline font-medium"
+              >
+                Click here
+              </a>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
   )
 }
 
-export default Register
+export default RegisterPage
