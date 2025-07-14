@@ -18,6 +18,13 @@ interface IOrderResponse {
           orderId: string
           productId: string
           qty: number
+          product: {
+            id: string
+            name: string
+            description: string
+            price: number
+            imageUrl: string
+          }
         }
       ]
     }

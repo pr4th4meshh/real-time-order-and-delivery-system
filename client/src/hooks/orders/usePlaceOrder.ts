@@ -21,6 +21,21 @@ interface IPlaceOrderResponse {
           orderId: string
           productId: string
           qty: number
+          items: [
+            {
+              id: string
+              orderId: string
+              productId: string
+              qty: number
+              product: {
+                id: string
+                name: string
+                description: string
+                price: number
+                imageUrl: string
+              }
+            }
+          ]
         }
       ]
     }
