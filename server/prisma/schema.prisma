@@ -42,6 +42,7 @@ model Product {
   description String
   price     Float
   imageUrl  String?
+  items     Item[] @relation("ProductItems")
 }
 
 enum Role {
@@ -54,7 +55,8 @@ model Item {
   id        String @id @default(auto()) @map("_id") @db.ObjectId
   order     Order  @relation(fields: [orderId], references: [id])
   orderId   String @db.ObjectId
-  productId String
+  productId String @db.ObjectId
+  product   Product  @relation("ProductItems", fields: [productId], references: [id])
   qty       Int
 }
 

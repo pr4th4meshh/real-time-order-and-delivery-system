@@ -20,7 +20,11 @@ export const placeOrder = async (req: Request, res: Response) => {
         },
       },
       include: {
-        items: true,
+        items: {
+          include: {
+            product: true,
+          },
+        },
       },
     })
 
@@ -60,7 +64,11 @@ export const getOrders = async (req: Request, res: Response) => {
           partner: null,
         },
         include: {
-          items: true,
+          items: {
+            include: {
+              product: true,
+            },
+          },
         },
       })
     } else {
@@ -123,7 +131,11 @@ export const acceptOrder = async (req: Request, res: Response) => {
         status: OrderStatus.accepted,
       },
       include: {
-        items: true,
+        items: {
+          include: {
+            product: true,
+          },
+        },
       },
     })
 
@@ -153,7 +165,13 @@ export const updateStatus = async (req: Request, res: Response) => {
     const updated = await prisma.order.update({
       where: { id: req.params.id },
       data: { status },
-      include: { items: true },
+      include: {
+        items: {
+          include: {
+            product: true,
+          },
+        },
+      },
     })
 
     return ApiResponse({
