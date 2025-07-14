@@ -4,6 +4,7 @@ import Login from "./pages/auth/login"
 import Register from "./pages/auth/register"
 import Landing from "./pages/landing"
 import { AuthRoute } from "./AuthRoute"
+import Cart from "./pages/cart"
 
 export const Router = () => {
   return (
@@ -28,6 +29,10 @@ export const Router = () => {
 
       <Route element={<AuthRoute allowedRoles={["admin"]} />}>
         <Route path="/dashboard/admin" element={<div>Admin Dashboard</div>} />
+      </Route>
+
+      <Route element={<AuthRoute allowedRoles={["customer"]} />}>
+        <Route path="/cart" element={<Cart />} />
       </Route>
 
       <Route path="*" element={<div>404 not found</div>} />
