@@ -5,6 +5,9 @@ import Register from "./pages/auth/register"
 import Landing from "./pages/landing"
 import { AuthRoute } from "./AuthRoute"
 import Cart from "./pages/cart"
+import CustomerDashboard from "./pages/dashboard/customer"
+import PartnerDashboard from "./pages/dashboard/partner"
+import AdminDashboard from "./pages/dashboard/admin"
 
 export const Router = () => {
   return (
@@ -20,15 +23,15 @@ export const Router = () => {
       <Route path="/auth/register/admin" element={<Register role="admin" />} />
 
       <Route element={<AuthRoute allowedRoles={["customer"]} />}>
-        <Route path="/dashboard" element={<div>Customer Dashboard</div>} />
+        <Route path="/dashboard" element={<CustomerDashboard />} />
       </Route>
 
       <Route element={<AuthRoute allowedRoles={["partner"]} />}>
-        <Route path="/dashboard/partner" element={<div>Partner Dashboard</div>} />
+        <Route path="/dashboard/partner" element={<PartnerDashboard />} />
       </Route>
 
       <Route element={<AuthRoute allowedRoles={["admin"]} />}>
-        <Route path="/dashboard/admin" element={<div>Admin Dashboard</div>} />
+        <Route path="/dashboard/admin" element={<AdminDashboard />} />
       </Route>
 
       <Route element={<AuthRoute allowedRoles={["customer"]} />}>
