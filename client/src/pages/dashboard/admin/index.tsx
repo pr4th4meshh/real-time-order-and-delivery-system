@@ -1,6 +1,11 @@
+import DashboardLayout from "@/components/gui/DashboardLayout"
+import AdminOrdersTable from "./_components/AdminOrdersTable"
+
 const AdminDashboard = () => {
   return (
-    <div>AdminDashboard</div>
+    <DashboardLayout role="admin">
+        <AdminOrdersTable />
+    </DashboardLayout>
   )
 }
 

@@ -3,8 +3,14 @@ import { prisma } from "../lib/prisma"
 import { ApiResponse } from "../utils/apiResponse"
 
 export const getAllUsers = async (req: Request, res: Response) => {
+  const currentUserId = req.user.id
   try {
     const users = await prisma.user.findMany({
+      where: {
+        id: {
+          not: currentUserId
+        }
+      },
       select: {
         id: true,
         name: true,

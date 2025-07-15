@@ -12,8 +12,8 @@ const Landing = () => {
   const cart = useStore((s) => s.cart)
   const [showPopup, setShowPopup] = useState(false)
   const navigate = useNavigate()
-  const {mutate: logout} = useLogout()
-  const {user} = useStore()
+  const { mutate: logout } = useLogout()
+  const { user } = useStore()
 
   useEffect(() => {
     if (cart.length > 0) {
@@ -26,13 +26,34 @@ const Landing = () => {
     navigate("/auth/login")
   }
 
+  const handleNavigateAccordingToRole = () => {
+    if (user?.role === "customer") {
+      navigate("/dashboard/customer")
+    } else if (user?.role === "partner") {
+      navigate("/dashboard/partner")
+    } else if (user?.role === "admin") {
+      navigate("/dashboard/admin")
+    }
+  }
+
   if (isLoading) return <div className="text-center mt-10">Loading...</div>
 
   return (
     <div className="max-w-6xl mx-auto p-4">
       <h1 className="text-4xl font-bold text-center mb-6">🛍 Shop Now</h1>
       <span>{user?.name ? `Welcome ${user?.name}` : "Unauthenticated"}</span>
-      <Button variant="default" onClick={handleLogout}>Logout</Button>
+      {user?.name && (
+        <div className="flex items-center gap-x-2">
+          {
+            <Button variant="default" onClick={handleNavigateAccordingToRole}>
+              View Dashboard
+            </Button>
+          }
+          <Button variant="destructive" onClick={handleLogout}>
+            Logout
+          </Button>
+        </div>
+      )}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {data?.data.map((product: IProduct) => (
           <div

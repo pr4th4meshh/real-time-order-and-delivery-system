@@ -8,6 +8,7 @@ import Cart from "./pages/cart"
 import CustomerDashboard from "./pages/dashboard/customer"
 import PartnerDashboard from "./pages/dashboard/partner"
 import AdminDashboard from "./pages/dashboard/admin"
+import ManageUsers from "./pages/dashboard/admin/users"
 
 export const Router = () => {
   return (
@@ -32,6 +33,10 @@ export const Router = () => {
 
       <Route element={<AuthRoute allowedRoles={["admin"]} />}>
         <Route path="/dashboard/admin" element={<AdminDashboard />} />
+      </Route>
+
+      <Route element={<AuthRoute allowedRoles={["admin"]} />}>
+        <Route path="/dashboard/admin/users" element={<ManageUsers />} />
       </Route>
 
       <Route element={<AuthRoute allowedRoles={["customer"]} />}>
