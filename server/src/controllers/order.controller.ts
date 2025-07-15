@@ -55,7 +55,11 @@ export const getOrders = async (req: Request, res: Response) => {
           customerId: req.user.id,
         },
         include: {
-          items: true,
+          items: {
+            include: {
+              product: true,
+            }
+          },
         },
       })
     } else if (req.user.role === "partner") {

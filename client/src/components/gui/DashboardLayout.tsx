@@ -20,7 +20,6 @@ import { useLogout } from "@/hooks/auth/useLogout"
 const DASHBOARD_MENU = {
   customer: [
     { label: "Home", icon: <Home />, href: "/dashboard" },
-    { label: "My Orders", icon: <Package />, href: "/dashboard/orders" },
     { label: "Profile", icon: <User />, href: "/dashboard/profile" },
   ],
   partner: [

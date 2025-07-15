@@ -1,8 +1,11 @@
-import React from 'react'
+import DashboardLayout from "@/components/gui/DashboardLayout"
+import UserOrdersTable from "./components/UserOrdersTable"
 
 const CustomerDashboard = () => {
   return (
-    <div>CustomerDashboard</div>
+    <DashboardLayout role="customer">
+      <UserOrdersTable />
+    </DashboardLayout>
   )
 }
 

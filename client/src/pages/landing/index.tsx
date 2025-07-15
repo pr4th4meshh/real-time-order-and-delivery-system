@@ -28,7 +28,7 @@ const Landing = () => {
 
   const handleNavigateAccordingToRole = () => {
     if (user?.role === "customer") {
-      navigate("/dashboard/customer")
+      navigate("/dashboard")
     } else if (user?.role === "partner") {
       navigate("/dashboard/partner")
     } else if (user?.role === "admin") {
