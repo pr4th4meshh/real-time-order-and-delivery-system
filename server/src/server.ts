@@ -2,6 +2,7 @@ import express from "express"
 import authRouter from "./routes/auth.route"
 import productRouter from "./routes/product.route"
 import orderRouter from "./routes/order.route"
+import partnerRouter from "./routes/partner.route"
 import cors from "cors"
 import cookieParser from "cookie-parser"
 
@@ -16,6 +17,7 @@ app.use(cookieParser())
 app.use("/api/v1/auth", authRouter)
 app.use("/api/v1/product", productRouter)
 app.use("/api/v1/order", orderRouter)
+app.use("/api/v1/partner", partnerRouter)
 
 app.get("/", (_req, res) => {
   res.json({
