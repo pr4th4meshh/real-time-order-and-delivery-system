@@ -29,8 +29,8 @@ const DASHBOARD_MENU = {
   ],
   admin: [
     { label: "Overview", icon: <Home />, href: "/dashboard/admin" },
-    { label: "Manage Users", icon: <User />, href: "/dashboard/users" },
-    { label: "All Orders", icon: <Package />, href: "/dashboard/orders" },
+    { label: "Manage Users", icon: <User />, href: "/dashboard/admin/users" },
+    { label: "All Orders", icon: <Package />, href: "/dashboard/admin/orders" },
   ],
 }
 

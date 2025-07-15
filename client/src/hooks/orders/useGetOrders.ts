@@ -1,6 +1,8 @@
 import { axiosInstance } from "@/lib/api-instance"
 import { useQuery } from "@tanstack/react-query"
 
+export type OrderType = "available" | "mine" | undefined
+
 interface IOrderResponse {
   success: boolean
   message: string
@@ -31,14 +33,15 @@ interface IOrderResponse {
   ]
 }
 
-const handleGetOrders = async () => {
-  const response = await axiosInstance.get("/order")
+const handleGetOrders = async (type: OrderType = undefined) => {
+  const query = type ? `?type=${type}` : ""
+  const response = await axiosInstance.get(`/order${query}`)
   return response.data as IOrderResponse
 }
 
-export const useGetOrders = () => {
+export const useGetOrders = (type: OrderType = undefined) => {
   return useQuery({
-    queryKey: ["orders"],
-    queryFn: handleGetOrders,
+    queryKey: ["orders", type],
+    queryFn: () => handleGetOrders(type),
   })
 }
