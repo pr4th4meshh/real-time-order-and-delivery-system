@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/sidebar"
 
 import { useLocation, useNavigate } from "react-router-dom"
-import { Home, Package, User, Truck } from "lucide-react"
+import { Home, Package, User, Truck, Users } from "lucide-react"
 import { useStore } from "@/store/store"
 import { Button } from "../ui/button"
 import { useLogout } from "@/hooks/auth/useLogout"
@@ -28,7 +28,8 @@ const DASHBOARD_MENU = {
   ],
   admin: [
     { label: "All Orders", icon: <Package />, href: "/dashboard/admin" },
-    { label: "Manage Users", icon: <User />, href: "/dashboard/admin/users" },
+    { label: "Manage Users", icon: <Users />, href: "/dashboard/admin/users" },
+    { label: "Profile", icon: <User />, href: "/dashboard/admin/profile" },
   ],
 }
 

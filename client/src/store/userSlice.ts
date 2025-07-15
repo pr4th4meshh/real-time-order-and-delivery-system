@@ -5,9 +5,10 @@ import { IUser } from "@/types/user.types"
 
 interface UserState {
   user: {
+    id: string | null
     email: string | null
     name: string | null
-    role: IUser['role']
+    role: IUser["role"]
   }
   isAuthorized: boolean
   error: string | null
@@ -15,7 +16,12 @@ interface UserState {
 }
 
 interface UserActions {
-  setUser: (email: string | null, name: string | null, role: string | null) => void
+  setUser: (
+    id: string | null,
+    email: string | null,
+    name: string | null,
+    role: string | null
+  ) => void
   setIsAuthorized: (value: boolean) => void
   logoutUser: () => void
   fetchUserStatus: () => Promise<void>
@@ -30,6 +36,7 @@ export const createUserSlice: StateCreator<
   UserSlice
 > = (set) => ({
   user: {
+    id: null,
     email: null,
     name: null,
     role: null,
@@ -37,10 +44,16 @@ export const createUserSlice: StateCreator<
   isAuthorized: false,
   isLoading: true,
   error: null,
-  setUser: (email: string | null, name: string | null, role: string | null) =>
+  setUser: (
+    id: string | null,
+    email: string | null,
+    name: string | null,
+    role: string | null
+  ) =>
     set((state) => ({
       ...state,
       user: {
+        id,
         email,
         name,
         role,
@@ -54,6 +67,7 @@ export const createUserSlice: StateCreator<
   logoutUser: () => {
     set(() => ({
       user: {
+        id: null,
         email: null,
         name: null,
         role: null,
@@ -75,6 +89,7 @@ export const createUserSlice: StateCreator<
         ...state,
         isAuthorized,
         user: {
+          id: user.id,
           email: user.email,
           name: user.name,
           role: user.role,

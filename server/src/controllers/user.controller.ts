@@ -8,8 +8,8 @@ export const getAllUsers = async (req: Request, res: Response) => {
     const users = await prisma.user.findMany({
       where: {
         id: {
-          not: currentUserId
-        }
+          not: currentUserId,
+        },
       },
       select: {
         id: true,
@@ -63,6 +63,43 @@ export const getUserById = async (req: Request, res: Response) => {
       res,
       success: true,
       message: "User fetched successfully",
+      data: user,
+    })
+  } catch (error) {
+    return ApiResponse({
+      res,
+      status: 500,
+      success: false,
+      message: "Something went wrong",
+      data: error,
+    })
+  }
+}
+
+export const updateUserDetails = async (req: Request, res: Response) => {
+  const { id } = req.params
+  const { name, email } = req.body
+  try {
+    const user = await prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        name,
+        email,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+      },
+    })
+
+    return ApiResponse({
+      res,
+      success: true,
+      message: "User details updated successfully",
       data: user,
     })
   } catch (error) {

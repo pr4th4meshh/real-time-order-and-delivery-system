@@ -1,4 +1,5 @@
 export interface IUser {
+  id: string | null
   email: string | null
   name: string | null
   role: 'customer' | 'partner' | 'admin' | null
