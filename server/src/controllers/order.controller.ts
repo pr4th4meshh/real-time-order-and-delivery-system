@@ -84,7 +84,13 @@ export const getOrders = async (req: Request, res: Response) => {
       }
     } else {
       // admin sees all
-      orders = await prisma.order.findMany({ include: { items: true } })
+      orders = await prisma.order.findMany({
+        include: {
+          items: {
+            include: { product: true },
+          },
+        },
+      })
     }
 
     return ApiResponse({
