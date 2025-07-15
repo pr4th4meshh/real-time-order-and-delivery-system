@@ -59,18 +59,29 @@ export const getOrders = async (req: Request, res: Response) => {
         },
       })
     } else if (req.user.role === "partner") {
-      orders = await prisma.order.findMany({
-        where: {
-          partner: null,
-        },
-        include: {
-          items: {
-            include: {
-              product: true,
+      const type = req.query.type // "available" | "mine" | undefined
+
+      if (req.user.role === "partner") {
+        let condition
+        if (type === "mine") {
+          condition = { partnerId: req.user.id }
+        } else if (type === "available") {
+          condition = { partner: null }
+        } else {
+          condition = {
+            OR: [{ partner: null }, { partnerId: req.user.id }],
+          }
+        }
+
+        orders = await prisma.order.findMany({
+          where: condition,
+          include: {
+            items: {
+              include: { product: true },
             },
           },
-        },
-      })
+        })
+      }
     } else {
       // admin sees all
       orders = await prisma.order.findMany({ include: { items: true } })
