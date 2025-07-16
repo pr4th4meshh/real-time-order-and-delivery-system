@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query"
 
 export type OrderType = "available" | "mine" | undefined
 
-interface IOrderResponse {
+export interface IOrderResponse {
   success: boolean
   message: string
   data: [

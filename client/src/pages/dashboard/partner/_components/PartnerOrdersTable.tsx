@@ -4,32 +4,47 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { useGetOrders } from "@/hooks/orders/useGetOrders"
 import { useAcceptOrder } from "@/hooks/orders/useAcceptOrder"
 import { useUpdateOrderStatus } from "@/hooks/orders/useUpdateOrderStatus"
 import { toast } from "sonner"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { connectWebSocket, sendOrderUpdate } from "@/lib/ws-client"
 
 const PartnerOrdersTable = () => {
   const [type, setType] = useState<"available" | "mine">("available")
-  const { data, isLoading } = useGetOrders(type)
+  const { data, isLoading, refetch } = useGetOrders(type)
   const { mutate: acceptOrder, isPending: accepting } = useAcceptOrder()
   const { mutate: updateStatus, isPending: updating } = useUpdateOrderStatus()
 
+  useEffect(() => {
+    connectWebSocket((data) => {
+      console.log("Partner received message:", data)
+    })
+  }, [])
+
   const handleAccept = (id: string) => {
     acceptOrder(id, {
-      onSuccess: () => toast.success("Order accepted successfully!"),
-      onError: () => toast.error("Failed to accept order")
+      onSuccess: () => {
+        toast.success("Order accepted successfully!")
+        refetch()
+        sendOrderUpdate(id, "accepted")
+      },
+      onError: () => toast.error("Failed to accept order"),
     })
   }
 
   const handleStatusChange = (id: string, nextStatus: string) => {
     updateStatus([id, nextStatus], {
-      onSuccess: () => toast.success(`Order marked as ${nextStatus}`),
-      onError: () => toast.error("Failed to update status")
+      onSuccess: () => {
+        toast.success(`Order marked as ${nextStatus}`)
+        sendOrderUpdate(id, nextStatus)
+        refetch()
+      },
+      onError: () => toast.error("Failed to update status"),
     })
   }
 
@@ -79,12 +94,17 @@ const PartnerOrdersTable = () => {
                       {order.items.map((item) => (
                         <li key={item.id}>
                           📦{" "}
-                          <span className="font-medium">{item.product.name}</span> x {item.qty}
+                          <span className="font-medium">
+                            {item.product.name}
+                          </span>{" "}
+                          x {item.qty}
                         </li>
                       ))}
                     </ul>
                   </TableCell>
-                  <TableCell className="capitalize font-medium">{order.status}</TableCell>
+                  <TableCell className="capitalize font-medium">
+                    {order.status}
+                  </TableCell>
                   <TableCell className="space-x-2">
                     {order.status === "placed" && !order.partnerId && (
                       <Button
@@ -111,7 +131,9 @@ const PartnerOrdersTable = () => {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => handleStatusChange(order.id, "delivered")}
+                        onClick={() =>
+                          handleStatusChange(order.id, "delivered")
+                        }
                         disabled={updating}
                       >
                         Mark Delivered

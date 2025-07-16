@@ -6,14 +6,44 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useGetOrders } from "@/hooks/orders/useGetOrders"
+import { IOrderResponse, useGetOrders } from "@/hooks/orders/useGetOrders"
 import { Badge } from "@/components/ui/badge"
 import { formatDistanceToNow } from "date-fns"
+import { useEffect, useMemo, useState } from "react"
+import { connectWebSocket, subscribeToOrder } from "@/lib/ws-client"
+
+type Order = IOrderResponse["data"][number]
 
 const UserOrdersTable = () => {
   const { data, isLoading } = useGetOrders()
+  const initialOrders = useMemo(() => data?.data || [], [data?.data])
+  const [orders, setOrders] = useState<Order[]>([])
 
-  const orders = data?.data || []
+  useEffect(() => {
+    setOrders(initialOrders)
+  }, [initialOrders])
+
+  useEffect(() => {
+    if (initialOrders.length === 0) return
+
+    connectWebSocket(
+      (data) => {
+        if (data.type === "status-update") {
+          setOrders((prev) =>
+            prev.map((o) =>
+              o.id === data.orderId ? { ...o, status: data.status } : o
+            )
+          )
+        }
+      },
+      () => {
+        // Re-subscribe on reconnect
+        initialOrders.forEach((order) => {
+          subscribeToOrder(order.id)
+        })
+      }
+    )
+  }, [initialOrders])
 
   if (isLoading) return <div className="p-4">Loading your orders...</div>
 
@@ -22,7 +52,9 @@ const UserOrdersTable = () => {
       <h2 className="text-xl font-semibold mb-4">Your Orders</h2>
 
       {orders.length === 0 ? (
-        <div className="text-center p-4">You haven’t placed any orders yet.</div>
+        <div className="text-center p-4">
+          You haven’t placed any orders yet.
+        </div>
       ) : (
         <div className="overflow-x-auto">
           <Table>
@@ -43,7 +75,9 @@ const UserOrdersTable = () => {
                       {order.items.map((item) => (
                         <li key={item.id}>
                           📦{" "}
-                          <span className="font-medium">{item.product.name}</span>{" "}
+                          <span className="font-medium">
+                            {item.product.name}
+                          </span>{" "}
                           x {item.qty}
                         </li>
                       ))}

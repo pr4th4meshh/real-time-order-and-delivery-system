@@ -6,6 +6,8 @@ import partnerRouter from "./routes/partner.route"
 import userRouter from "./routes/user.route"
 import cors from "cors"
 import cookieParser from "cookie-parser"
+import http from "http"
+import { attachWebSocket } from "./wsServer"
 
 const app = express()
 const PORT = process.env.PORT
@@ -35,6 +37,10 @@ app.get("/health", (_req, res) => {
   })
 })
 
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`)
+const server = http.createServer(app)
+attachWebSocket(server)
+
+server.listen(PORT, () => {
+  console.log(`🚀 Server running at http://localhost:${PORT}`)
+  console.log(`📡 WS listening on ws://localhost:${PORT}`)
 })
