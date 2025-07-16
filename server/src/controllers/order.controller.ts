@@ -12,6 +12,46 @@ export const placeOrder = async (req: Request, res: Response) => {
       }[]
     }
 
+    // Check availability and atomically decrement
+    const decrementedProducts: any[] = []
+
+    for (const item of items) {
+      const updated = await prisma.product.updateMany({
+        where: {
+          id: item.productId,
+          qty: {
+            gte: item.qty, // must have enough stock
+          },
+        },
+        data: {
+          qty: {
+            decrement: item.qty,
+          },
+        },
+      })
+
+      if (updated.count === 0) {
+        // Rollback if any product fails
+        for (const rollback of decrementedProducts) {
+          await prisma.product.update({
+            where: { id: rollback.productId },
+            data: { qty: { increment: rollback.qty } },
+          })
+        }
+
+        return ApiResponse({
+          res,
+          status: 400,
+          success: false,
+          message: `Insufficient stock for product ${item.productId}`,
+          data: null,
+        })
+      }
+
+      decrementedProducts.push(item)
+    }
+
+    // ✅ Create order only if all stock updates succeed
     const order = await prisma.order.create({
       data: {
         customerId: req.user.id,
@@ -45,6 +85,7 @@ export const placeOrder = async (req: Request, res: Response) => {
     })
   }
 }
+
 
 export const getOrders = async (req: Request, res: Response) => {
   try {
@@ -135,22 +176,55 @@ export const acceptOrder = async (req: Request, res: Response) => {
       })
     }
 
-    if (existing.partnerId) {
-      return ApiResponse({
-        res,
-        message: "Already accepted",
-        status: 401,
-        success: false,
-        data: null,
-      })
-    }
+    // if (existing.partnerId) {
+    //   return ApiResponse({
+    //     res,
+    //     message: "Already accepted",
+    //     status: 401,
+    //     success: false,
+    //     data: null,
+    //   })
+    // }
 
-    const order = await prisma.order.update({
-      where: { id: orderId },
+    const order = await prisma.order.updateMany({
+      where: {
+        id: orderId,
+        partnerId: null, // ✅ ensure it's still not accepted
+      },
       data: {
         partnerId: req.user!.id,
         status: OrderStatus.accepted,
       },
+    })
+    
+    if (order.count === 0) {
+      return ApiResponse({
+        res,
+        message: "Another partner already accepted this order",
+        status: 409,
+        success: false,
+        data: null,
+      })
+    }
+    
+
+    // const order = await prisma.order.update({
+    //   where: { id: orderId },
+    //   data: {
+    //     partnerId: req.user!.id,
+    //     status: OrderStatus.accepted,
+    //   },
+    //   include: {
+    //     items: {
+    //       include: {
+    //         product: true,
+    //       },
+    //     },
+    //   },
+    // })
+
+    const fullOrder = await prisma.order.findUnique({
+      where: { id: orderId },
       include: {
         items: {
           include: {
@@ -165,7 +239,7 @@ export const acceptOrder = async (req: Request, res: Response) => {
       message: "Order accepted successfully",
       status: 200,
       success: true,
-      data: order,
+      data: fullOrder,
     })
   } catch (error) {
     return ApiResponse({

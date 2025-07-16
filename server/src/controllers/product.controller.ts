@@ -1,10 +1,9 @@
 import { Request, Response } from "express"
 import { ApiResponse } from "../utils/apiResponse"
-import { User } from "@prisma/client"
 import { prisma } from "../lib/prisma"
 
 export const createProduct = async (req: Request, res: Response) => {
-  const { name, description, price, imageUrl } = req.body
+  const { name, description, price, imageUrl, qty } = req.body
   try {
     const product = await prisma.product.create({
       data: {
@@ -12,6 +11,7 @@ export const createProduct = async (req: Request, res: Response) => {
         description,
         price,
         imageUrl,
+        qty
       },
     })
     return ApiResponse({
