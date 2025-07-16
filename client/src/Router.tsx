@@ -10,6 +10,7 @@ import PartnerDashboard from "./pages/dashboard/partner"
 import AdminDashboard from "./pages/dashboard/admin"
 import ManageUsers from "./pages/dashboard/admin/users"
 import Profile from "./pages/dashboard/profile"
+import AdminProducts from "./pages/dashboard/admin/products"
 
 export const Router = () => {
   return (
@@ -37,6 +38,7 @@ export const Router = () => {
       {/* Admin Routes */}
       <Route element={<AuthRoute allowedRoles={["admin"]} />}>
         <Route path="/dashboard/admin" element={<AdminDashboard />} />
+        <Route path="/dashboard/admin/products" element={<AdminProducts />} />
         <Route path="/dashboard/admin/users" element={<ManageUsers />} />
         <Route path="/dashboard/admin/profile" element={<Profile />} />
       </Route>

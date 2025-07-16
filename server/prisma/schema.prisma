@@ -42,7 +42,7 @@ model Product {
   description String
   price       Float
   imageUrl    String?
-  qty         Int
+  qty         Int     @default(0)
   items       Item[]  @relation("ProductItems")
 }
 
