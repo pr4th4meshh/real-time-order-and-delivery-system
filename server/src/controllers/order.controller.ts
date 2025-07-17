@@ -159,12 +159,11 @@ export const getOrders = async (req: Request, res: Response) => {
 // partner accepts order
 export const acceptOrder = async (req: Request, res: Response) => {
   try {
-    const orderId = req.params.id
+    const orderId = req.params.id;
+
     const existing = await prisma.order.findUnique({
-      where: {
-        id: orderId,
-      },
-    })
+      where: { id: orderId },
+    });
 
     if (!existing) {
       return ApiResponse({
@@ -173,84 +172,52 @@ export const acceptOrder = async (req: Request, res: Response) => {
         status: 404,
         success: false,
         data: null,
-      })
+      });
     }
 
-    // if (existing.partnerId) {
-    //   return ApiResponse({
-    //     res,
-    //     message: "Already accepted",
-    //     status: 401,
-    //     success: false,
-    //     data: null,
-    //   })
-    // }
+    if (existing.partnerId) {
+      console.log(`[BLOCKED] Order already accepted by partner ${existing.partnerId}`);
+      return ApiResponse({
+        res,
+        message: "Order already accepted by another partner",
+        status: 409,
+        success: false,
+        data: null,
+      });
+    }
 
-    const order = await prisma.order.updateMany({
-      where: {
-        id: orderId,
-        partnerId: null, // ✅ ensure it's still not accepted
-      },
+    const updatedOrder = await prisma.order.update({
+      where: { id: orderId },
       data: {
         partnerId: req.user!.id,
         status: OrderStatus.accepted,
       },
-    })
-    
-    if (order.count === 0) {
-      return ApiResponse({
-        res,
-        message: "Another partner already accepted this order",
-        status: 409,
-        success: false,
-        data: null,
-      })
-    }
-    
-
-    // const order = await prisma.order.update({
-    //   where: { id: orderId },
-    //   data: {
-    //     partnerId: req.user!.id,
-    //     status: OrderStatus.accepted,
-    //   },
-    //   include: {
-    //     items: {
-    //       include: {
-    //         product: true,
-    //       },
-    //     },
-    //   },
-    // })
-
-    const fullOrder = await prisma.order.findUnique({
-      where: { id: orderId },
       include: {
-        items: {
-          include: {
-            product: true,
-          },
-        },
+        items: { include: { product: true } }, // optional, customize as needed
       },
-    })
+    });
+
+    console.log(`[ACCEPTED] Partner ${req.user!.id} accepted order ${orderId}`);
 
     return ApiResponse({
       res,
       message: "Order accepted successfully",
       status: 200,
       success: true,
-      data: fullOrder,
-    })
-  } catch (error) {
+      data: updatedOrder,
+    });
+
+  } catch (error: any) {
+    console.error("Error accepting order:", error.message);
     return ApiResponse({
       res,
-      message: "Something went wrong",
+      message: "Something went wrong while accepting the order",
       status: 500,
       success: false,
-      data: error,
-    })
+      data: null,
+    });
   }
-}
+};
 
 export const updateStatus = async (req: Request, res: Response) => {
   try {
