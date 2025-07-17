@@ -1,37 +1,20 @@
-# # client/Dockerfile
-# FROM node:20-alpine AS builder
+# client/Dockerfile
 
-# WORKDIR /app
-# COPY . .
+# Step 1: Build the React app
+FROM node:20-alpine AS builder
 
-# RUN npm install
-# RUN npm run build
+WORKDIR /app
+COPY . .
+RUN npm install
+RUN npm run build
 
-# # Serve using `serve`
-# FROM node:20-alpine
-
-# WORKDIR /app
-# RUN npm install -g serve
-
-# COPY --from=builder /app/dist /app/dist
-
-# EXPOSE 5173
-# CMD ["serve", "-s", "dist", "-l", "5173"]
-
-
+# Step 2: Serve the built app with `serve`
 FROM node:20-alpine
 
 WORKDIR /app
+RUN npm install -g serve
 
-# Copy only package files first for caching
-COPY package*.json ./
+COPY --from=builder /app/dist /app/dist
 
-# Install ALL dependencies including dev (like Vite)
-RUN npm install
-
-# Then copy rest of the files
-COPY . .
-
-EXPOSE 5173
-
-CMD ["npm", "run", "dev"]
+EXPOSE 3000
+CMD ["serve", "-s", "dist", "-l", "3000"]
