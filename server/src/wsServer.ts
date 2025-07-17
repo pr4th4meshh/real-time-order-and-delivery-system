@@ -60,8 +60,15 @@ wss.on("connection", (ws: ExtWebSocket) => {
 // Integrate with HTTP server
 export const attachWebSocket = (server: http.Server) => {
   server.on("upgrade", (req, socket, head) => {
-    wss.handleUpgrade(req, socket, head, (ws) => {
-      wss.emit("connection", ws, req)
-    })
+    const isDev = process.env.NODE_ENV !== "production"
+
+    // In prod, only accept /ws path
+    if (isDev || req.url === "/ws") {
+      wss.handleUpgrade(req, socket, head, (ws) => {
+        wss.emit("connection", ws, req)
+      })
+    } else {
+      socket.destroy()
+    }
   })
 }
