@@ -14,35 +14,52 @@ import { connectWebSocket, subscribeToOrder } from "@/lib/ws-client"
 
 type Order = IOrderResponse["data"][number]
 
+interface StatusUpdateMessage {
+  type: "status-update"
+  orderId: string
+  status: Order["status"]
+}
+
+type WebSocketMessage = StatusUpdateMessage | {
+  type: "unknown" // fallback for future extension
+  [key: string]: unknown
+}
+
 const UserOrdersTable = () => {
   const { data, isLoading } = useGetOrders()
-  const initialOrders = useMemo(() => data?.data || [], [data?.data])
+
+  const initialOrders = useMemo<Order[]>(() => data?.data ?? [], [data?.data])
   const [orders, setOrders] = useState<Order[]>([])
 
+  // Sync fetched orders to local state
   useEffect(() => {
     setOrders(initialOrders)
   }, [initialOrders])
 
+  // WebSocket setup
   useEffect(() => {
     if (initialOrders.length === 0) return
 
-    connectWebSocket(
-      (data) => {
-        if (data.type === "status-update") {
-          setOrders((prev) =>
-            prev.map((o) =>
-              o.id === data.orderId ? { ...o, status: data.status } : o
-            )
+    const handleMessage = (msg: WebSocketMessage) => {
+      if (msg.type === "status-update") {
+        setOrders((prev) =>
+          prev.map((order) =>
+            order.id === msg.orderId ? { ...order, status: msg.status } : order
           )
-        }
-      },
-      () => {
-        // Re-subscribe on reconnect
-        initialOrders.forEach((order) => {
-          subscribeToOrder(order.id)
-        })
+        )
       }
-    )
+    }
+
+    connectWebSocket(handleMessage, () => {
+      initialOrders.forEach((order) => {
+        subscribeToOrder(order.id)
+      })
+    })
+
+    // Also subscribe immediately in case readyState is already open
+    initialOrders.forEach((order) => {
+      subscribeToOrder(order.id)
+    })
   }, [initialOrders])
 
   if (isLoading) return <div className="p-4">Loading your orders...</div>

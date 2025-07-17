@@ -35,6 +35,7 @@ export const connectWebSocket = (
 
 export const subscribeToOrder = (orderId: string) => {
     if (socket && socket.readyState === WebSocket.OPEN) {
+      console.log("🧩 Subscribing to order:", orderId)
       socket.send(JSON.stringify({ type: "subscribe", orderId })) 
     }
   }
