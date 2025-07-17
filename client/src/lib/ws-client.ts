@@ -4,7 +4,7 @@ export const connectWebSocket = (
   onMessage: (data: any) => void,
   onReconnect?: () => void
 ) => {
-  socket = new WebSocket("wss://orders.prathamesssh.xyz/ws")
+  socket = new WebSocket("wss://orders.prathamesssh.xyz/ws/")
 
   socket.onopen = () => {
     console.log("✅ WebSocket connected")
