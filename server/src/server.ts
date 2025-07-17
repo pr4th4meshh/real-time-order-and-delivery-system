@@ -12,7 +12,7 @@ import { attachWebSocket } from "./wsServer"
 const app = express()
 const PORT = process.env.PORT
 
-const allowedOrigins = ["http://localhost:5173", "http://localhost:5174"]
+const allowedOrigins = ["http://localhost:5173", "http://localhost:5174", "https://orders.prathamesssh.xyz"]
 app.use(cors({ origin: allowedOrigins, credentials: true }))
 
 app.use(express.json())

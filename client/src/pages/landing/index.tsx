@@ -5,6 +5,7 @@ import { IProduct } from "@/types/product.types"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { useLogout } from "@/hooks/auth/useLogout"
+import Navbar from "@/components/gui/Navbar"
 
 const Landing = () => {
   const { data, isLoading } = useGetProducts()
@@ -40,6 +41,7 @@ const Landing = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-4">
+      <Navbar />
       <h1 className="text-4xl font-bold text-center mb-6">🛍 Shop Now</h1>
       <span>{user?.name ? `Welcome ${user?.name}` : "Unauthenticated"}</span>
       {user?.name && (
